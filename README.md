@@ -5,7 +5,7 @@ Status
 ---
 Early WIP, and no guarantees but useable for simple single byte encoded strings; obviously not Unicode aware.
 
-Example
+Examples
 ---
 ```C++
 using namespace nonstd::string_utils;
@@ -18,6 +18,7 @@ starts_with("hello world", "hello"); // true
 ends_with("apple orange", "banana");  // false
 
 auto v = split("123,456", ',');  // v[0] == "123", v[1] == "456"
+auto v = split("123,456", 3, 1);  // Same result but faster
 ```
 
 Test and benchmark
