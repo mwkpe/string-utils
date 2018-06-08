@@ -11,7 +11,7 @@ Example
 using namespace nonstd::string_utils;
 
 auto s1 = std::string{"abc"};
-auto s2 = as_upper(s1);  // s1 == "abc", s2 == "ABC"
+auto s2 = ascii::as_upper(s1);  // s1 == "abc", s2 == "ABC"
 ascii::to_upper(s1);  // s1 == "ABC"
 
 starts_with("hello world", "hello"); // true
