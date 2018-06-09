@@ -35,7 +35,7 @@ ascii::to_upper(s1);  // s1 == "ABC"
 
 Test and benchmark
 ---
-`g++ -std=c++17 -O2 -Wall -o test test.cpp`
+`g++ -std=c++17 -O2 -Wall -o test test.cpp`<br>
 `g++ -std=c++17 -O2 -Wall -o bench bench.cpp`
 
 Using the benchmark requires the hayai header files in a bench/hayai subdirectory.
