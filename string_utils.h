@@ -28,37 +28,37 @@ template<typename I> inline bool compare(I a, I b, I last)
 }
 
 
-std::vector<std::string_view> split_keep_empty(std::string_view sv, std::string_view token)
+template <typename T> std::vector<T> split_keep_empty(std::string_view sv, std::string_view token)
 {
   std::size_t start = 0;
   auto i = sv.find(token);
-  std::vector<std::string_view> parts;
+  std::vector<T> parts;
 
   while (i != sv.npos) {
-    parts.push_back(sv.substr(start, i - start));
+    parts.emplace_back(sv.substr(start, i - start));
     start = i + token.size();
     i = sv.find(token, start);
   }
-  parts.push_back(sv.substr(start));
+  parts.emplace_back(sv.substr(start));
 
   return parts;
 }
 
 
-std::vector<std::string_view> split_ignore_empty(std::string_view sv, std::string_view token)
+template <typename T> std::vector<T> split_ignore_empty(std::string_view sv, std::string_view token)
 {
   std::size_t start = 0;
   auto i = sv.find(token);
-  std::vector<std::string_view> parts;
+  std::vector<T> parts;
 
   while (i != sv.npos) {
     if (auto len = i - start; len > 0)
-      parts.push_back(sv.substr(start, len));
+      parts.emplace_back(sv.substr(start, len));
     start = i + token.size();
     i = sv.find(token, start);
   }
   if (sv.size() - start > 0)
-    parts.push_back(sv.substr(start));
+    parts.emplace_back(sv.substr(start));
 
   return parts;
 }
@@ -156,8 +156,16 @@ bool ends_with(std::string_view sv, std::string_view test)
 std::vector<std::string_view> split(std::string_view sv, std::string_view token, bool keep_empty_parts = true)
 {
   if (keep_empty_parts)
-    return detail::split_keep_empty(sv, token);
-  return detail::split_ignore_empty(sv, token);
+    return detail::split_keep_empty<std::string_view>(sv, token);
+  return detail::split_ignore_empty<std::string_view>(sv, token);
+}
+
+
+std::vector<std::string> split_copy(std::string_view sv, std::string_view token, bool keep_empty_parts = true)
+{
+  if (keep_empty_parts)
+    return detail::split_keep_empty<std::string>(sv, token);
+  return detail::split_ignore_empty<std::string>(sv, token);
 }
 
 
@@ -168,6 +176,16 @@ std::tuple<std::string_view, std::string_view> split_first(std::string_view sv, 
   }
 
   return {sv, {}};
+}
+
+
+std::tuple<std::string, std::string> split_first_copy(std::string_view sv, std::string_view token)
+{
+  if (auto i = sv.find(token); i != sv.npos) {
+    return {std::string{sv.substr(0, i)}, std::string{sv.substr(i+token.size())}};
+  }
+
+  return {std::string{sv}, {}};
 }
 
 
