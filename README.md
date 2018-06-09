@@ -1,4 +1,4 @@
-# string utils
+# string_utils
 A single-header collection of utility functions for strings using C++17 `string_view`.
 
 Status
