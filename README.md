@@ -19,8 +19,6 @@ auto b = split("123,456,", ",");  // b.size() == 3, b[0] == "123", b[1] == "456"
 // Ignore empty parts
 auto c = split("123,456,", ",", false);  // c.size() == 2, c[0] == "123", c[1] == "456"
 
-
-
 auto s1 = std::string{"abc"};
 auto s2 = ascii::as_upper(s1);  // s1 == "abc", s2 == "ABC"
 ascii::to_upper(s1);  // s1 == "ABC"
