@@ -43,7 +43,6 @@ TEST_CASE("ascii split") {
 
   SUBCASE("1") {
     auto v = ascii::split("abcdefghijklmnop", 3);
-
     CHECK(v.size() == 6);
     CHECK(v[0] == "abc");
     CHECK(v[1] == "def");
@@ -55,7 +54,6 @@ TEST_CASE("ascii split") {
 
   SUBCASE("2") {
     auto v = ascii::split("abc,def,ghi,jkl,mno,p", 3, 1);
-
     CHECK(v.size() == 6);
     CHECK(v[0] == "abc");
     CHECK(v[1] == "def");
@@ -77,7 +75,6 @@ TEST_CASE("ascii split") {
 
   SUBCASE("5") {
     auto v = ascii::split("abc", 1, 1);
-
     CHECK(v.size() == 2);
     CHECK(v[0] == "a");
     CHECK(v[1] == "c");
@@ -85,7 +82,6 @@ TEST_CASE("ascii split") {
 
   SUBCASE("6") {
     auto v = ascii::split("abc", 1, 2);
-
     CHECK(v.size() == 1);
     CHECK(v[0] == "a");
   }
@@ -131,9 +127,11 @@ TEST_CASE("ends_with") {
 TEST_CASE("split_keep_empty") {
   using namespace nonstd::string_utils::detail;
 
-  SUBCASE("1") {
-    auto v = split_keep_empty("a,b,c", ',');
+  // Single character token
+  //
 
+  SUBCASE("1") {
+    auto v = split_keep_empty("a,b,c", ",");
     CHECK(v.size() == 3);
     CHECK(v[0] == "a");
     CHECK(v[1] == "b");
@@ -141,62 +139,99 @@ TEST_CASE("split_keep_empty") {
   }
 
   SUBCASE("2") {
-    auto v = split_keep_empty("", ',');
+    auto v = split_keep_empty(",bb,cc", ",");
+    CHECK(v.size() == 3);
+    CHECK(v[0].empty());
+    CHECK(v[1] == "bb");
+    CHECK(v[2] == "cc");
+  }
 
+  SUBCASE("3") {
+    auto v = split_keep_empty("aaa,b,", ",");
+    CHECK(v.size() == 3);
+    CHECK(v[0] == "aaa");
+    CHECK(v[1] == "b");
+    CHECK(v[2].empty());
+  }
+
+  SUBCASE("4") {
+    auto v = split_keep_empty("aaa,b,", "x");
+    CHECK(v.size() == 1);
+    CHECK(v[0] == "aaa,b,");
+  }
+
+  SUBCASE("5") {
+    auto v = split_keep_empty("", ",");
     CHECK(v.size() == 1);
     CHECK(v[0].empty());
   }
 
-  SUBCASE("3") {
-    auto v = split_keep_empty(",", ',');
-
-    CHECK(v.size() == 2);
-    CHECK(v[0].empty());
-    CHECK(v[1].empty());
-  }
-
-  SUBCASE("4") {
-    auto v = split_keep_empty(",,", ',');
-
-    CHECK(v.size() == 3);
-    CHECK(v[0].empty());
-    CHECK(v[1].empty());
-    CHECK(v[2].empty());
-  }
-
-  SUBCASE("5") {
-    auto v = split_keep_empty("a,", ',');
-
-    CHECK(v.size() == 2);
-    CHECK(v[0] == "a");
-    CHECK(v[1].empty());
-  }
-
   SUBCASE("6") {
-    auto v = split_keep_empty(",$", ',');
-
+    auto v = split_keep_empty(",", ",");
     CHECK(v.size() == 2);
     CHECK(v[0].empty());
-    CHECK(v[1] == "$");
+    CHECK(v[1].empty());
   }
 
   SUBCASE("7") {
-    auto v = split_keep_empty("ab:::b:ccc", ':');
-
-    CHECK(v.size() == 5);
-    CHECK(v[0] == "ab");
+    auto v = split_keep_empty(",,", ",");
+    CHECK(v.size() == 3);
+    CHECK(v[0].empty());
     CHECK(v[1].empty());
     CHECK(v[2].empty());
-    CHECK(v[3] == "b");
-    CHECK(v[4] == "ccc");
   }
 
-  SUBCASE("8") {
-    auto v = split_keep_empty(",alpha-beta,1-", '-');
+  // Multi-character token
+  //
 
+  SUBCASE("8") {
+    auto v = split_keep_empty("a123b123c", "123");
     CHECK(v.size() == 3);
-    CHECK(v[0] == ",alpha");
-    CHECK(v[1] == "beta,1");
+    CHECK(v[0] == "a");
+    CHECK(v[1] == "b");
+    CHECK(v[2] == "c");
+  }
+
+  SUBCASE("9") {
+    auto v = split_keep_empty("123bb123cc", "123");
+    CHECK(v.size() == 3);
+    CHECK(v[0].empty());
+    CHECK(v[1] == "bb");
+    CHECK(v[2] == "cc");
+  }
+
+  SUBCASE("10") {
+    auto v = split_keep_empty("aaa123b123", "123");
+    CHECK(v.size() == 3);
+    CHECK(v[0] == "aaa");
+    CHECK(v[1] == "b");
+    CHECK(v[2].empty());
+  }
+
+  SUBCASE("11") {
+    auto v = split_keep_empty("aaa123b123", "xyz");
+    CHECK(v.size() == 1);
+    CHECK(v[0] == "aaa123b123");
+  }
+
+  SUBCASE("12") {
+    auto v = split_keep_empty("", "123");
+    CHECK(v.size() == 1);
+    CHECK(v[0].empty());
+  }
+
+  SUBCASE("13") {
+    auto v = split_keep_empty("123", "123");
+    CHECK(v.size() == 2);
+    CHECK(v[0].empty());
+    CHECK(v[1].empty());
+  }
+
+  SUBCASE("14") {
+    auto v = split_keep_empty("123123", "123");
+    CHECK(v.size() == 3);
+    CHECK(v[0].empty());
+    CHECK(v[1].empty());
     CHECK(v[2].empty());
   }
 }
@@ -205,9 +240,11 @@ TEST_CASE("split_keep_empty") {
 TEST_CASE("split_ignore_empty") {
   using namespace nonstd::string_utils::detail;
 
-  SUBCASE("1") {
-    auto v = split_ignore_empty("a,b,c", ',');
+  // Single character token
+  //
 
+  SUBCASE("1") {
+    auto v = split_ignore_empty("a,b,c", ",");
     CHECK(v.size() == 3);
     CHECK(v[0] == "a");
     CHECK(v[1] == "b");
@@ -215,52 +252,84 @@ TEST_CASE("split_ignore_empty") {
   }
 
   SUBCASE("2") {
-    auto v = split_ignore_empty("", ',');
-
-    CHECK(v.size() == 0);
+    auto v = split_ignore_empty(",bb,cc", ",");
+    CHECK(v.size() == 2);
+    CHECK(v[0] == "bb");
+    CHECK(v[1] == "cc");
   }
 
   SUBCASE("3") {
-    auto v = split_ignore_empty(",", ',');
-
-    CHECK(v.size() == 0);
+    auto v = split_ignore_empty("aaa,b,", ",");
+    CHECK(v.size() == 2);
+    CHECK(v[0] == "aaa");
+    CHECK(v[1] == "b");
   }
 
   SUBCASE("4") {
-    auto v = split_ignore_empty(",,", ',');
-
-    CHECK(v.size() == 0);
+    auto v = split_ignore_empty("aaa,b,", "x");
+    CHECK(v.size() == 1);
+    CHECK(v[0] == "aaa,b,");
   }
 
   SUBCASE("5") {
-    auto v = split_ignore_empty("a,", ',');
-
-    CHECK(v.size() == 1);
-    CHECK(v[0] == "a");
+    auto v = split_ignore_empty("", ",");
+    CHECK(v.size() == 0);
   }
 
   SUBCASE("6") {
-    auto v = split_ignore_empty(",$", ',');
-
-    CHECK(v.size() == 1);
-    CHECK(v[0] == "$");
+    auto v = split_ignore_empty(",", ",");
+    CHECK(v.size() == 0);
   }
 
   SUBCASE("7") {
-    auto v = split_ignore_empty("ab:::b:ccc", ':');
-
-    CHECK(v.size() == 3);
-    CHECK(v[0] == "ab");
-    CHECK(v[1] == "b");
-    CHECK(v[2] == "ccc");
+    auto v = split_ignore_empty(",,", ",");
+    CHECK(v.size() == 0);
   }
 
-  SUBCASE("8") {
-    auto v = split_ignore_empty(",alpha-beta,1-", '-');
+  // Multi-character token
+  //
 
+  SUBCASE("8") {
+    auto v = split_ignore_empty("a123b123c", "123");
+    CHECK(v.size() == 3);
+    CHECK(v[0] == "a");
+    CHECK(v[1] == "b");
+    CHECK(v[2] == "c");
+  }
+
+  SUBCASE("9") {
+    auto v = split_ignore_empty("123bb123cc", "123");
     CHECK(v.size() == 2);
-    CHECK(v[0] == ",alpha");
-    CHECK(v[1] == "beta,1");
+    CHECK(v[0] == "bb");
+    CHECK(v[1] == "cc");
+  }
+
+  SUBCASE("10") {
+    auto v = split_ignore_empty("aaa123b123", "123");
+    CHECK(v.size() == 2);
+    CHECK(v[0] == "aaa");
+    CHECK(v[1] == "b");
+  }
+
+  SUBCASE("11") {
+    auto v = split_ignore_empty("aaa123b123", "xyz");
+    CHECK(v.size() == 1);
+    CHECK(v[0] == "aaa123b123");
+  }
+
+  SUBCASE("12") {
+    auto v = split_ignore_empty("", "123");
+    CHECK(v.size() == 0);
+  }
+
+  SUBCASE("13") {
+    auto v = split_ignore_empty("123", "123");
+    CHECK(v.size() == 0);
+  }
+
+  SUBCASE("14") {
+    auto v = split_ignore_empty("123123", "123");
+    CHECK(v.size() == 0);
   }
 }
 
@@ -268,7 +337,7 @@ TEST_CASE("split_ignore_empty") {
 TEST_CASE("ascii split and split cross check") {
   using namespace nonstd::string_utils;
   const char* s = "123,456,789,3";
-  auto v1 = split(s, ',');
+  auto v1 = split(s, ",");
   auto v2 = ascii::split(s, 3, 1);
   CHECK(v1.size() == v2.size());
   CHECK(v1[0] == v2[0]);
