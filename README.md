@@ -14,10 +14,12 @@ starts_with("hello world", "hello"); // true
 ends_with("apple orange", "banana");  // false
 
 auto a = split("hello123world", "123");  // a.size() == 2, a[0] == "hello", a[1] == "world"
-// Ignore empty parts by default
-auto b = split("123,456,", ",");  // b.size() == 2, b[0] == "123", b[1] == "456"
-// Keep empty parts
-auto c = split("123,456,", ",", false);  // c.size() == 3, c[0] == "123", c[1] == "456", c[2] empty
+// Keep empty parts by default
+auto b = split("123,456,", ",");  // b.size() == 3, b[0] == "123", b[1] == "456", b[2] empty
+// Ignore empty parts
+auto c = split("123,456,", ",", false);  // c.size() == 2, c[0] == "123", c[1] == "456"
+
+
 
 auto s1 = std::string{"abc"};
 auto s2 = ascii::as_upper(s1);  // s1 == "abc", s2 == "ABC"
