@@ -1,5 +1,5 @@
 # string utils
-A single-header collection of utility functions for strings using C++17 string_views
+A single-header collection of utility functions for strings using C++17 `string_view`, i.e. no copies are made from the input. Functions will return a tuple, vector or simple `string_view`.
 
 Status
 ---
@@ -10,15 +10,18 @@ Examples
 ```C++
 using namespace nonstd::string_utils;
 
-auto s1 = std::string{"abc"};
-auto s2 = ascii::as_upper(s1);  // s1 == "abc", s2 == "ABC"
-ascii::to_upper(s1);  // s1 == "ABC"
-
 starts_with("hello world", "hello"); // true
 ends_with("apple orange", "banana");  // false
 
-auto v = split("123,456", ',');  // v[0] == "123", v[1] == "456"
-auto v = split("123,456", 3, 1);  // Same result but faster
+auto a = split("hello123world", "123");  // a.size() == 2, a[0] == "hello", a[1] == "world"
+// Ignore empty parts by default
+auto b = split("123,456,", ',');  // b.size() == 2, b[0] == "123", b[1] == "456"
+// Keep empty parts
+auto c = split("123,456,", ',', false);  // c.size() == 3, c[0] == "123", c[1] == "456", c[2] empty
+
+auto s1 = std::string{"abc"};
+auto s2 = ascii::as_upper(s1);  // s1 == "abc", s2 == "ABC"
+ascii::to_upper(s1);  // s1 == "ABC"
 ```
 
 Test and benchmark

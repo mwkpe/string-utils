@@ -28,7 +28,7 @@ template<typename I> inline bool compare(I a, I b, I last)
 }
 
 
-std::vector<std::string_view> split_keep_empty(std::string_view sv, char token)
+std::vector<std::string_view> split_keep_empty(std::string_view sv, std::string_view token)
 {
   std::size_t start = 0;
   auto i = sv.find(token);
@@ -36,7 +36,7 @@ std::vector<std::string_view> split_keep_empty(std::string_view sv, char token)
 
   while (i != sv.npos) {
     parts.push_back(sv.substr(start, i - start));
-    start = i + 1;
+    start = i + token.size();
     i = sv.find(token, start);
   }
   parts.push_back(sv.substr(start));
@@ -45,7 +45,7 @@ std::vector<std::string_view> split_keep_empty(std::string_view sv, char token)
 }
 
 
-std::vector<std::string_view> split_ignore_empty(std::string_view sv, char token)
+std::vector<std::string_view> split_ignore_empty(std::string_view sv, std::string_view token)
 {
   std::size_t start = 0;
   auto i = sv.find(token);
@@ -54,7 +54,7 @@ std::vector<std::string_view> split_ignore_empty(std::string_view sv, char token
   while (i != sv.npos) {
     if (auto len = i - start; len > 0)
       parts.push_back(sv.substr(start, len));
-    start = i + 1;
+    start = i + token.size();
     i = sv.find(token, start);
   }
   if (sv.size() - start > 0)
@@ -153,7 +153,7 @@ bool ends_with(std::string_view sv, std::string_view test)
 }
 
 
-std::vector<std::string_view> split(std::string_view sv, char token, bool keep_empty_parts = true)
+std::vector<std::string_view> split(std::string_view sv, std::string_view token, bool keep_empty_parts = true)
 {
   if (keep_empty_parts)
     return detail::split_keep_empty(sv, token);
@@ -161,10 +161,10 @@ std::vector<std::string_view> split(std::string_view sv, char token, bool keep_e
 }
 
 
-std::tuple<std::string_view, std::string_view> split_first(std::string_view sv, char token)
+std::tuple<std::string_view, std::string_view> split_first(std::string_view sv, std::string_view token)
 {
   if (auto i = sv.find(token); i != sv.npos) {
-    return {sv.substr(0, i), sv.substr(i+1)};
+    return {sv.substr(0, i), sv.substr(i+token.size())};
   }
 
   return {sv, {}};
