@@ -334,6 +334,36 @@ TEST_CASE("split ignore empty") {
 }
 
 
+TEST_CASE("replace") {
+  using namespace std::string_literals;
+  using namespace nonstd::string_utils;
+
+  SUBCASE("1") {
+    auto s1 = replace("hello beautiful world", "beautiful", "wretched");
+    auto s2 = replace(s1, "hello", "goodbye");
+    auto s3 = replace(s2, "world", "existence");
+    CHECK(s1 == "hello wretched world");
+    CHECK(s2 == "goodbye wretched world");
+    CHECK(s3 == "goodbye wretched existence");
+  }
+
+  SUBCASE("2") {
+    auto s = replace("man fears time", "time", "the pyramids");
+    s = replace(s, "man", "time");
+    CHECK(s == "time fears the pyramids");
+  }
+
+  SUBCASE("3") {
+    CHECK(replace("abc", "a", "x") == "xbc");
+    CHECK(replace("abc", "b", "x") == "axc");
+    CHECK(replace("abc", "c", "x") == "abx");
+    CHECK(replace("aabbcc", "a", "x") == "xxbbcc");
+    CHECK(replace("aabbcc", "b", "x") == "aaxxcc");
+    CHECK(replace("aabbcc", "c", "x") == "aabbxx");
+  }
+}
+
+
 TEST_CASE("ascii split and split cross check") {
   using namespace nonstd::string_utils;
   const char* s = "123,456,789,3";

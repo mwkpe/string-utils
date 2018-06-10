@@ -14,18 +14,16 @@ using namespace nonstd::string_utils;
 starts_with("hello world", "hello"); // true
 ends_with("apple orange", "banana");  // false
 
-// Get views (no copies are made)
+// Splits
 auto a = split("hello,world", ",");  // Returns vector<string_view>
-
-// Get copies by using the `_copy` functions
 auto a = split_copy("hello,world", ",");  // Returns vector<string>
-
-// Further examples
-auto a = split("hello123world", "123");  // a.size() == 2, a[0] == "hello", a[1] == "world"
-// Keep empty parts by default
-auto b = split("123,456,", ",");  // b.size() == 3, b[0] == "123", b[1] == "456", b[2] empty
+// Empty parts are kept by default
+auto b = split("123-456-", "-");  // b.size() == 3, b[0] == "123", b[1] == "456", b[2] empty
 // Ignore empty parts
-auto c = split("123,456,", ",", false);  // c.size() == 2, c[0] == "123", c[1] == "456"
+auto c = split("123-456-", "-", false);  // c.size() == 2, c[0] == "123", c[1] == "456"
+
+// Replace
+auto r = replace("hello world", "hello", "goodbye");  // r = "goodbye world"
 
 // ASCII stuff
 auto s1 = std::string{"abc"};
