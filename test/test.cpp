@@ -391,6 +391,11 @@ TEST_CASE("before/after first/last") {
     CHECK(after_last("The quick brown fox", "The quick brown fox") == "");
     CHECK(after_last("The quick brown fox", "banana") == "");
   }
+
+  SUBCASE("5") {
+    const char* s = "<AzureDiamond> doesnt look like stars to me";
+    CHECK(after_first(before_first(s, ">"), "<") == "AzureDiamond");
+  }
 }
 
 
