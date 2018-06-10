@@ -2,17 +2,23 @@
 #define NONSTD_STRING_UTILS_H
 
 
-#include <cstdint>
 #include <string>
 #include <string_view>
 #include <locale>
 #include <vector>
-#include <algorithm>
-#include <iostream>
 
 
 namespace nonstd::string_utils::detail
 {
+
+
+template<typename I, typename F> void transform(I start, I stop, F func)
+{
+  while (start != stop) {
+    *start = func(*start);
+    start++;
+  }
+}
 
 
 template<typename I> inline bool compare(I a, I b, const I last)
@@ -77,13 +83,13 @@ namespace nonstd::string_utils::ascii
 
 void to_upper(std::string& s)
 {
-  std::transform(std::begin(s), std::end(s), std::begin(s), ::toupper);
+  detail::transform(std::begin(s), std::end(s), ::toupper);
 }
 
 
 void to_lower(std::string& s)
 {
-  std::transform(std::begin(s), std::end(s), std::begin(s), ::tolower);
+  detail::transform(std::begin(s), std::end(s), ::tolower);
 }
 
 
