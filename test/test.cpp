@@ -334,6 +334,66 @@ TEST_CASE("split ignore empty") {
 }
 
 
+TEST_CASE("split first/last") {
+  using namespace nonstd::string_utils;
+
+  SUBCASE("1") {
+    CHECK(split_first("The quick brown fox", "o") == std::make_tuple("The quick br", "wn fox"));
+    CHECK(split_first("The quick brown fox", "x") == std::make_tuple("The quick brown fo", ""));
+    CHECK(split_first("The quick brown fox", "The") == std::make_tuple("", " quick brown fox"));
+    CHECK(split_first("The quick brown fox", "") == std::make_tuple("", "The quick brown fox"));
+    CHECK(split_first("The quick brown fox", "banana") == std::make_tuple("The quick brown fox", ""));
+    CHECK(split_first("", "banana") == std::make_tuple("", ""));
+    CHECK(split_first("", "") == std::make_tuple("", ""));
+
+    CHECK(split_last("The quick brown fox", "o") == std::make_tuple("The quick brown f", "x"));
+    CHECK(split_last("The quick brown fox", "x") == std::make_tuple("The quick brown fo", ""));
+    CHECK(split_last("The quick brown fox", "The") == std::make_tuple("", " quick brown fox"));
+    CHECK(split_last("The quick brown fox", "") == std::make_tuple("The quick brown fox", ""));
+    CHECK(split_last("The quick brown fox", "banana") == std::make_tuple("The quick brown fox", ""));
+    CHECK(split_last("", "banana") == std::make_tuple("", ""));
+    CHECK(split_last("", "") == std::make_tuple("", ""));
+  }
+}
+
+
+TEST_CASE("before/after first/last") {
+  using namespace nonstd::string_utils;
+
+  SUBCASE("1") {
+    CHECK(before_first("The quick brown fox", "o") == "The quick br");
+    CHECK(before_first("The quick brown fox", "x") == "The quick brown fo");
+    CHECK(before_first("The quick brown fox", "The") == "");
+    CHECK(before_first("The quick brown fox", "The quick brown fox") == "");
+    CHECK(before_first("The quick brown fox", "banana") == "");
+  }
+
+  SUBCASE("2") {
+    CHECK(before_last("The quick brown fox", "o") == "The quick brown f");
+    CHECK(before_last("The quick brown fox", "x") == "The quick brown fo");
+    CHECK(before_last("The quick brown fox", "The") == "");
+    CHECK(before_last("The quick brown fox", "The quick brown fox") == "");
+    CHECK(before_last("The quick brown fox", "banana") == "");
+  }
+
+  SUBCASE("3") {
+    CHECK(after_first("The quick brown fox", "o") == "wn fox");
+    CHECK(after_first("The quick brown fox", "x") == "");
+    CHECK(after_first("The quick brown fox", "The") == " quick brown fox");
+    CHECK(after_first("The quick brown fox", "The quick brown fox") == "");
+    CHECK(after_first("The quick brown fox", "banana") == "");
+  }
+
+  SUBCASE("4") {
+    CHECK(after_last("The quick brown fox", "o") == "x");
+    CHECK(after_last("The quick brown fox", "x") == "");
+    CHECK(after_last("The quick brown fox", "The") == " quick brown fox");
+    CHECK(after_last("The quick brown fox", "The quick brown fox") == "");
+    CHECK(after_last("The quick brown fox", "banana") == "");
+  }
+}
+
+
 TEST_CASE("replace") {
   using namespace std::string_literals;
   using namespace nonstd::string_utils;

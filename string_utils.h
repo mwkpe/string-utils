@@ -35,7 +35,8 @@ template<typename I> inline bool compare(I a, I b, const I last)
 }
 
 
-template <typename T> std::vector<T> split_keep_empty(std::string_view sv, std::string_view token)
+template <typename T> std::vector<T> split_keep_empty(std::string_view sv,
+    std::string_view token)
 {
   std::size_t start = 0;
   auto i = sv.find(token);
@@ -52,7 +53,8 @@ template <typename T> std::vector<T> split_keep_empty(std::string_view sv, std::
 }
 
 
-template <typename T> std::vector<T> split_ignore_empty(std::string_view sv, std::string_view token)
+template <typename T> std::vector<T> split_ignore_empty(std::string_view sv,
+    std::string_view token)
 {
   std::size_t start = 0;
   auto i = sv.find(token);
@@ -68,6 +70,62 @@ template <typename T> std::vector<T> split_ignore_empty(std::string_view sv, std
     parts.emplace_back(sv.substr(start));
 
   return parts;
+}
+
+
+template <typename T> inline std::tuple<T, T> split_first(std::string_view sv,
+    std::string_view token)
+{
+  if (auto i = sv.find(token); i != sv.npos) {
+    return {T{sv.substr(0, i)}, T{sv.substr(i+token.size())}};
+  }
+  return {T{sv}, T{}};
+}
+
+
+template <typename T> inline std::tuple<T, T> split_last(std::string_view sv,
+    std::string_view token)
+{
+  if (auto i = sv.rfind(token); i != sv.npos) {
+    return {T{sv.substr(0, i)}, T{sv.substr(i+token.size())}};
+  }
+  return {T{sv}, T{}};
+}
+
+
+template <typename T> inline T before_first(std::string_view sv, std::string_view token)
+{
+  if (auto i = sv.find(token); i != sv.npos) {
+    return T{sv.substr(0, i)};
+  }
+  return T{};
+}
+
+
+template <typename T> inline T before_last(std::string_view sv, std::string_view token)
+{
+  if (auto i = sv.rfind(token); i != sv.npos) {
+    return T{sv.substr(0, i)};
+  }
+  return T{};
+}
+
+
+template <typename T> inline T after_first(std::string_view sv, std::string_view token)
+{
+  if (auto i = sv.find(token); i != sv.npos) {
+    return T{sv.substr(i + token.size())};
+  }
+  return T{};
+}
+
+
+template <typename T> inline T after_last(std::string_view sv, std::string_view token)
+{
+  if (auto i = sv.rfind(token); i != sv.npos) {
+    return T{sv.substr(i + token.size())};
+  }
+  return T{};
 }
 
 
@@ -177,22 +235,76 @@ std::vector<std::string> split_copy(std::string_view sv, std::string_view token,
 std::tuple<std::string_view, std::string_view> split_first(std::string_view sv,
     std::string_view token)
 {
-  if (auto i = sv.find(token); i != sv.npos) {
-    return {sv.substr(0, i), sv.substr(i+token.size())};
-  }
-
-  return {sv, {}};
+  return detail::split_first<std::string_view>(sv, token);
 }
 
 
 std::tuple<std::string, std::string> split_first_copy(std::string_view sv,
     std::string_view token)
 {
-  if (auto i = sv.find(token); i != sv.npos) {
-    return {std::string{sv.substr(0, i)}, std::string{sv.substr(i+token.size())}};
-  }
+  return detail::split_first<std::string>(sv, token);
+}
 
-  return {std::string{sv}, {}};
+
+std::tuple<std::string_view, std::string_view> split_last(std::string_view sv,
+    std::string_view token)
+{
+  return detail::split_last<std::string_view>(sv, token);
+}
+
+
+std::tuple<std::string, std::string> split_last_copy(std::string_view sv,
+    std::string_view token)
+{
+  return detail::split_last<std::string>(sv, token);
+}
+
+
+std::string_view before_first(std::string_view sv, std::string_view token)
+{
+  return detail::before_first<std::string_view>(sv, token);
+}
+
+
+std::string before_first_copy(std::string_view sv, std::string_view token)
+{
+  return detail::before_first<std::string>(sv, token);
+}
+
+
+std::string_view before_last(std::string_view sv, std::string_view token)
+{
+  return detail::before_last<std::string_view>(sv, token);
+}
+
+
+std::string before_last_copy(std::string_view sv, std::string_view token)
+{
+  return detail::before_last<std::string>(sv, token);
+}
+
+
+std::string_view after_first(std::string_view sv, std::string_view token)
+{
+  return detail::after_first<std::string_view>(sv, token);
+}
+
+
+std::string after_first_copy(std::string_view sv, std::string_view token)
+{
+  return detail::after_first<std::string>(sv, token);
+}
+
+
+std::string_view after_last(std::string_view sv, std::string_view token)
+{
+  return detail::after_last<std::string_view>(sv, token);
+}
+
+
+std::string after_last_copy(std::string_view sv, std::string_view token)
+{
+  return detail::after_last<std::string>(sv, token);
 }
 
 
