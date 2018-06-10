@@ -12,7 +12,7 @@ namespace nonstd::string_utils::detail
 {
 
 
-template<typename I, typename F> void transform(I start, I stop, F func)
+template<typename I, typename F> inline void transform(I start, I stop, F func)
 {
   while (start != stop) {
     *start = func(*start);
@@ -95,20 +95,16 @@ void to_lower(std::string& s)
 
 std::string as_upper(std::string_view sv)
 {
-  std::string s;
-  s.reserve(sv.size());
-  for (auto c : sv)
-    s += ::toupper(c);
+  std::string s{sv};
+  detail::transform(std::begin(s), std::end(s), ::toupper);
   return s;
 }
 
 
 std::string as_lower(std::string_view sv)
 {
-  std::string s;
-  s.reserve(sv.size());
-  for (auto c : sv)
-    s += ::tolower(c);
+  std::string s{sv};
+  detail::transform(std::begin(s), std::end(s), ::tolower);
   return s;
 }
 
