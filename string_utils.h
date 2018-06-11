@@ -133,9 +133,7 @@ template <typename T> inline T between(std::string_view sv, std::string_view fir
     std::string_view second_token)
 {
   if (auto i = sv.find(first_token), j = sv.rfind(second_token);
-      i != sv.npos && j != sv.npos) {
-    if (j <= i)
-      return T{};
+      i != sv.npos && j != sv.npos && j > i) {
     return T{sv.substr(i + first_token.size(), j - i - first_token.size())};
   }
   return T{};
