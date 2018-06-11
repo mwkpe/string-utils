@@ -129,6 +129,19 @@ template <typename T> inline T after_last(std::string_view sv, std::string_view 
 }
 
 
+template <typename T> inline T between(std::string_view sv, std::string_view first_token,
+    std::string_view second_token)
+{
+  if (auto i = sv.find(first_token), j = sv.rfind(second_token);
+      i != sv.npos && j != sv.npos) {
+    if (j <= i)
+      return T{};
+    return T{sv.substr(i + first_token.size(), j - i - first_token.size())};
+  }
+  return T{};
+}
+
+
 }  // namepsace nonstd::string_utils::detail
 
 
@@ -305,6 +318,20 @@ std::string_view after_last(std::string_view sv, std::string_view token)
 std::string after_last_copy(std::string_view sv, std::string_view token)
 {
   return detail::after_last<std::string>(sv, token);
+}
+
+
+std::string_view between(std::string_view sv, std::string_view first_token,
+    std::string_view second_token)
+{
+  return detail::between<std::string_view>(sv, first_token, second_token);
+}
+
+
+std::string between_copy(std::string_view sv, std::string_view first_token,
+    std::string_view second_token)
+{
+  return detail::between<std::string>(sv, first_token, second_token);
 }
 
 

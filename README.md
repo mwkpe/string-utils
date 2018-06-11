@@ -25,7 +25,7 @@ auto b = split("123-456-", "-", false);  // b.size() == 2, b[0] == "123", b[1] =
 // Grab
 auto line = std::string{"<AzureDiamond> doesnt look like stars to me"};
 auto message = after_first(line, "> ");  // message = "doesnt look like stars to me"
-auto name = after_first(before_first(line, ">"), "<");  // name = "AzureDiamond"
+auto name = between(line, "<", ">");  // name = "AzureDiamond"
 
 // Replace
 auto r = replace("hello world", "hello", "goodbye");  // r = "goodbye world"

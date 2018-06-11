@@ -399,6 +399,14 @@ TEST_CASE("before/after first/last") {
 }
 
 
+TEST_CASE("between") {
+  using namespace nonstd::string_utils;
+  const char* s = "<AzureDiamond> doesnt look like stars to me";
+  CHECK(between(s, "<", ">") == "AzureDiamond");
+  CHECK(between(s, ">", "<") == "");
+}
+
+
 TEST_CASE("replace") {
   using namespace std::string_literals;
   using namespace nonstd::string_utils;
