@@ -130,11 +130,22 @@ template <typename T> inline T after_last(std::string_view sv, std::string_view 
 
 
 template <typename T> inline T between(std::string_view sv, std::string_view first_token,
-    std::string_view second_token)
+    std::string_view second_token, bool greedy = false)
 {
-  if (auto i = sv.find(first_token), j = sv.rfind(second_token);
+  if (auto i = sv.find(first_token), j = greedy ? sv.rfind(second_token) : sv.find(second_token);
       i != sv.npos && j != sv.npos && j > i) {
     return T{sv.substr(i + first_token.size(), j - i - first_token.size())};
+  }
+  return T{};
+}
+
+
+template <typename T> inline T rbetween(std::string_view sv, std::string_view first_token,
+    std::string_view second_token, bool greedy = false)
+{
+  if (auto i = sv.rfind(first_token), j = greedy ? sv.find(second_token) : sv.rfind(second_token);
+      i != sv.npos && j != sv.npos && j < i) {
+    return T{sv.substr(j + first_token.size(), i - j - first_token.size())};
   }
   return T{};
 }
@@ -320,16 +331,30 @@ std::string after_last_copy(std::string_view sv, std::string_view token)
 
 
 std::string_view between(std::string_view sv, std::string_view first_token,
-    std::string_view second_token)
+    std::string_view second_token, bool greedy = false)
 {
-  return detail::between<std::string_view>(sv, first_token, second_token);
+  return detail::between<std::string_view>(sv, first_token, second_token, greedy);
 }
 
 
 std::string between_copy(std::string_view sv, std::string_view first_token,
-    std::string_view second_token)
+    std::string_view second_token, bool greedy = false)
 {
-  return detail::between<std::string>(sv, first_token, second_token);
+  return detail::between<std::string>(sv, first_token, second_token, greedy);
+}
+
+
+std::string_view rbetween(std::string_view sv, std::string_view first_token,
+    std::string_view second_token, bool greedy = false)
+{
+  return detail::rbetween<std::string_view>(sv, first_token, second_token, greedy);
+}
+
+
+std::string rbetween_copy(std::string_view sv, std::string_view first_token,
+    std::string_view second_token, bool greedy = false)
+{
+  return detail::rbetween<std::string>(sv, first_token, second_token, greedy);
 }
 
 
