@@ -6,6 +6,10 @@
 #include <string_view>
 #include <locale>
 #include <vector>
+#if __has_include(<charconv>)
+  #define NONSTD_STRING_UTILS_CHARCONV
+  #include <charconv>
+#endif
 
 
 namespace nonstd::string_utils::detail
@@ -19,6 +23,16 @@ template<typename I, typename F> inline void transform(I start, I stop, F func)
     start++;
   }
 }
+
+
+#ifdef NONSTD_STRING_UTILS_CHARCONV
+  template <typename T> inline T parse_number(std::string_view sv)
+  {
+    T value{};
+    std::from_chars(sv.data(), sv.data() + sv.size(), value);
+    return value;
+  }
+#endif  // NONSTD_STRING_UTILS_CHARCONV
 
 
 template<typename I> inline bool compare(I a, I b, const I last)
@@ -35,7 +49,7 @@ template<typename I> inline bool compare(I a, I b, const I last)
 }
 
 
-template <typename T> std::vector<T> split_keep_empty(std::string_view sv,
+template <typename T> std::vector<T> inline split_keep_empty(std::string_view sv,
     std::string_view token)
 {
   std::size_t start = 0;
@@ -53,7 +67,7 @@ template <typename T> std::vector<T> split_keep_empty(std::string_view sv,
 }
 
 
-template <typename T> std::vector<T> split_ignore_empty(std::string_view sv,
+template <typename T> std::vector<T> inline split_ignore_empty(std::string_view sv,
     std::string_view token)
 {
   std::size_t start = 0;
@@ -386,6 +400,29 @@ std::string replace(std::string_view sv, std::string_view search_token,
 
   return result;
 }
+
+
+#ifdef NONSTD_STRING_UTILS_CHARCONV
+  int to_int(std::string_view sv)
+  {
+    return detail::parse_number<int>(sv);
+  }
+
+
+// Not yet supported by GCC 8
+//
+
+//  float to_float(std::string_view sv)
+//  {
+//    return detail::parse_number<float>(sv);
+//  }
+
+
+//  double to_double(std::string_view sv)
+//  {
+//    return detail::parse_number<double>(sv);
+//  }
+#endif  // NONSTD_STRING_UTILS_CHARCONV
 
 
 }  // namespace nonstd::string_utils

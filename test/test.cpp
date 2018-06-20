@@ -448,3 +448,12 @@ TEST_CASE("ascii split and split cross check") {
   CHECK(v1[2] == v2[2]);
   CHECK(v1[3] == v2[3]);
 }
+
+
+#ifdef NONSTD_STRING_UTILS_CHARCONV
+TEST_CASE("parse_number") {
+  using namespace nonstd::string_utils;
+  CHECK(to_int("1024") == 1024);
+  CHECK(to_int("-1024") == -1024);
+}
+#endif
