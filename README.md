@@ -30,7 +30,7 @@ auto name = between(line, "<", ">");  // name = "AzureDiamond"
 // Replace
 auto r = replace("hello world", "hello", "goodbye");  // r = "goodbye world"
 
-// Conversion
+// Conversion (requires <charconv> implementation, e.g. GCC 8)
 auto i = as_int("42");  // i = 42
 auto f = as_float("13.37");  // f = 13.37
 
