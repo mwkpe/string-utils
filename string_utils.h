@@ -6,8 +6,9 @@
 #include <string_view>
 #include <locale>
 #include <vector>
-#if __has_include(<charconv>)
+#if __GNUC__ == 8 && __has_include(<charconv>)
   #define NONSTD_STRING_UTILS_CHARCONV
+  #define NONSTD_STRING_UTILS_CHARCONV_INTEGRAL_TYPES_ONLY
   #include <charconv>
 #endif
 
@@ -26,10 +27,10 @@ template<typename I, typename F> inline void transform(I start, I stop, F func)
 
 
 #ifdef NONSTD_STRING_UTILS_CHARCONV
-  template <typename T> inline T parse_number(std::string_view sv)
+  template <typename T> inline T parse_number(std::string_view sv, int base = 10)
   {
     T value{};
-    std::from_chars(sv.data(), sv.data() + sv.size(), value);
+    std::from_chars(sv.data(), sv.data() + sv.size(), value, base);
     return value;
   }
 #endif  // NONSTD_STRING_UTILS_CHARCONV
@@ -403,25 +404,95 @@ inline std::string replace(std::string_view sv, std::string_view search_token,
 
 
 #ifdef NONSTD_STRING_UTILS_CHARCONV
-  inline int to_int(std::string_view sv)
+  inline int as_int(std::string_view sv, int base = 10)
   {
-    return detail::parse_number<int>(sv);
+    return detail::parse_number<int>(sv, base);
   }
 
 
-// Not yet supported by GCC 8
-//
-
-//  inline float to_float(std::string_view sv)
-//  {
-//    return detail::parse_number<float>(sv);
-//  }
+  inline std::uint8_t as_uint8(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::uint8_t>(sv, base);
+  }
 
 
-//  inline double to_double(std::string_view sv)
-//  {
-//    return detail::parse_number<double>(sv);
-//  }
+  inline std::uint16_t as_uint16(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::uint16_t>(sv, base);
+  }
+
+
+  inline std::uint32_t as_uint32(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::uint32_t>(sv, base);
+  }
+
+
+  inline std::uint64_t as_uint64(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::uint64_t>(sv, base);
+  }
+
+
+  inline std::int8_t as_int8(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::int8_t>(sv, base);
+  }
+
+
+  inline std::int16_t as_int16(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::int16_t>(sv, base);
+  }
+
+
+  inline std::int32_t as_int32(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::int32_t>(sv, base);
+  }
+
+
+  inline std::int64_t as_int64(std::string_view sv, int base = 10)
+  {
+    return detail::parse_number<std::int64_t>(sv, base);
+  }
+
+  
+  #ifdef NONSTD_STRING_UTILS_CHARCONV_INTEGRAL_TYPES_ONLY
+    inline float as_float(std::string_view sv)
+    {
+      return std::stof(std::string{sv});
+    }
+
+
+    inline double as_double(std::string_view sv)
+    {
+      return std::stod(std::string{sv});
+    }
+
+
+    inline long double as_longdouble(std::string_view sv)
+    {
+      return std::stold(std::string{sv});
+    }
+  #elif
+    inline float as_float(std::string_view sv)
+    {
+      return detail::parse_number<float>(sv);
+    }
+
+
+    inline double as_double(std::string_view sv)
+    {
+      return detail::parse_number<double>(sv);
+    }
+
+
+    inline long double as_longdouble(std::string_view sv)
+    {
+      return detail::parse_number<long double>(sv);
+    }
+  #endif
 #endif  // NONSTD_STRING_UTILS_CHARCONV
 
 
