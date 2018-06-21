@@ -1,9 +1,9 @@
 # string_utils
-A single-header collection of utility functions for strings using C++17 `string_view`.
+Utility functions for strings using on C++17 `<string_view>` and `<charconv>` to avoid unnecessary string copies.
 
 Status
 ---
-Early WIP, and no guarantees but useable for simple single byte encoded strings; obviously not Unicode aware.
+WIP, no guarantees, but useable for single byte encoded strings; obviously not Unicode aware or anything fancy.
 
 Examples
 ---
