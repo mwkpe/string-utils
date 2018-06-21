@@ -30,6 +30,17 @@ auto name = between(line, "<", ">");  // name = "AzureDiamond"
 // Replace
 auto r = replace("hello world", "hello", "goodbye");  // r = "goodbye world"
 
+// Conversion
+auto i = as_int("42");  // i = 42
+auto f = as_float("13.37");  // f = 13.37
+
+// Awesome
+auto csv = std::string{"42,13.37,no copies made"};
+auto values = split(csv, ",");
+auto i = as_uint8(values[0]);  // i = 42
+auto f = as_float(values[1]);  // f = 13.37
+auto sv = values[2]; // sv = "no copies made" (ok, as_float still does a copy until from_chars supports float)
+
 // ASCII stuff
 auto s1 = std::string{"abc"};
 auto s2 = ascii::as_upper(s1);  // s1 == "abc", s2 == "ABC"
