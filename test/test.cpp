@@ -1,4 +1,5 @@
 #include "../string_utils.h"
+#include <limits>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
@@ -401,9 +402,13 @@ TEST_CASE("before/after first/last") {
 
 TEST_CASE("between") {
   using namespace nonstd::string_utils;
-  const char* s = "<AzureDiamond> doesnt look like stars to me";
+  const char* s = "<AzureDiamond> doesnt <look> like stars to me";
   CHECK(between(s, "<", ">") == "AzureDiamond");
+  CHECK(between(s, "<", ">", true) == "AzureDiamond> doesnt <look");
   CHECK(between(s, ">", "<") == "");
+  CHECK(rbetween(s, ">", "<") == "look");
+  CHECK(rbetween(s, ">", "<", true) == "AzureDiamond> doesnt <look");
+  CHECK(rbetween(s, "<", ">") == "");
 }
 
 
@@ -453,7 +458,23 @@ TEST_CASE("ascii split and split cross check") {
 #ifdef NONSTD_STRING_UTILS_CHARCONV
 TEST_CASE("parse_number") {
   using namespace nonstd::string_utils;
-  CHECK(to_int("1024") == 1024);
-  CHECK(to_int("-1024") == -1024);
+  CHECK(as_int("0") == 0);
+  CHECK(as_int("1024") == 1024);
+  CHECK(as_int("-1024") == -1024);
+  CHECK(as_int("7FFFFFFF", 16) == 0x7FFFFFFF);
+  CHECK(as_int("80000000", 16) == 0);
+  CHECK(as_int("") == 0);
+  CHECK(as_int("0.0") == 0);
+  CHECK(as_int("13.37") == 13);
+  CHECK(as_float("13.37") == doctest::Approx(13.37));
+  CHECK(as_uint8("255") == 255);
+  CHECK(as_uint8("256") == 0);
+  CHECK(as_uint8("257") == 0);
+  CHECK(as_uint8("-1") == 0);
+  CHECK(as_int8("-1") == -1);
+  CHECK(as_int8("-128") == -128);
+  CHECK(as_int8("-129") == 0);
+  CHECK(as_int8("127") == 127);
+  CHECK(as_int8("128") == 0);
 }
 #endif
