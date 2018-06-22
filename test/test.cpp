@@ -439,6 +439,16 @@ TEST_CASE("replace") {
     CHECK(replace("aabbcc", "b", "x") == "aaxxcc");
     CHECK(replace("aabbcc", "c", "x") == "aabbxx");
   }
+
+  SUBCASE("4") {
+    auto s = std::string{"test with test ok, test123 test"};
+    CHECK(replace(s, "test", "rofl") == "rofl with rofl ok, rofl123 rofl");
+  }
+
+  SUBCASE("5") {
+    auto s = std::string{"test with test ok, test123 test"};
+    CHECK(detail::replace_inplace(s, "test", "rofl") == "rofl with rofl ok, rofl123 rofl");
+  }
 }
 
 

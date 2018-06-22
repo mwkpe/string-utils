@@ -103,6 +103,26 @@ BENCHMARK(string, split_copy, 100, 10000)
 }
 
 
+BENCHMARK(string, replace, 100, 10000)
+{
+  auto s = std::string{"The quick brown fox jumps over the lazy brown dog "
+      "and eats a brown apple from a brown tree under a brown sky"};
+  escape(&s);
+  s = nonstd::string_utils::detail::replace(s, "brown", "green");
+  clobber();
+}
+
+
+BENCHMARK(string, replace_inplace, 100, 10000)
+{
+  auto s = std::string{"The quick brown fox jumps over the lazy brown dog "
+      "and eats a brown apple from a brown tree under a brown sky"};
+  escape(&s);
+  s = nonstd::string_utils::detail::replace_inplace(s, "brown", "green");
+  clobber();
+}
+
+
 /*
 BENCHMARK(string, split_for_each, 100, 100000)
 {
