@@ -6,8 +6,8 @@
 
 
 // https://www.youtube.com/watch?v=nXaxk27zwlk#t=40m
-static void escape(void* p) { asm volatile("" : : "g"(p) : "memory"); }
-static void clobber() { asm volatile("" : : : "memory"); }
+[[maybe_unused]] static void escape(void* p) { asm volatile("" : : "g"(p) : "memory"); }
+[[maybe_unused]] static void clobber() { asm volatile("" : : : "memory"); }
 
 
 class RandomFixture : public hayai::Fixture
@@ -66,6 +66,7 @@ const char* csv_constw = "116112,117178,129932,138393,151968,155886,163385,16717
     "881416,898259,928830,958558,962443,994418,997562";
 
 
+/*
 BENCHMARK(string, starts_with, 100, 1000000)
 {
   using namespace nonstd::string_utils;
@@ -75,23 +76,40 @@ BENCHMARK(string, starts_with, 100, 1000000)
       "If you have nothing in quantum mechanics");
   clobber();
 }
+*/
 
 
-/*
-BENCHMARK(string, split, 100, 100000)
+BENCHMARK(string, split, 100, 10000)
 {
-  nonstd::string_utils::split(csv_constw, ',');
+  auto v = nonstd::string_utils::split(csv_full, ",");
+  for (auto sv : v) {
+    int i;
+    escape(&i);
+    i = nonstd::string_utils::as_int(sv);
+    clobber();
+  }
 }
 
 
+BENCHMARK(string, split_copy, 100, 10000)
+{
+  auto v = nonstd::string_utils::split_copy(csv_full, ",");
+  for (auto s : v) {
+    int i;
+    escape(&i);
+    i = std::stoi(s);
+    clobber();
+  }
+}
+
+
+/*
 BENCHMARK(string, split_for_each, 100, 100000)
 {
   nonstd::string_utils::ascii::split_for_each(csv_constw, 6, 1);
 }
-*/
 
 
-/*
 BENCHMARK_F(RandomFixture, split_at_char, 100, 100000)
 {
   nonstd::string_utils::split(s, ',');
