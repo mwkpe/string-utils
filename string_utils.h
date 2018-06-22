@@ -506,7 +506,7 @@ inline std::string replace(std::string_view sv, std::string_view search_token,
     {
       return std::stold(std::string{sv});
     }
-  #elif
+  #else
     inline float as_float(std::string_view sv)
     {
       return detail::parse_number<float>(sv);
