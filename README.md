@@ -32,7 +32,7 @@ auto r = replace("hello world", "hello", "goodbye");  // r = "goodbye world"
 
 // Conversion (requires <charconv> implementation, e.g. GCC 8)
 auto i = as_int("42");  // i = 42
-// Floating point not yet implemented by GCC 8.1 from_chars, so this does a string copy >:(
+// Floating point charconv not yet implemented by GCC 8.1, does a string copy for now >:(
 auto f = as_float("13.37");  // f = 13.37
 
 // Awesome
@@ -40,7 +40,7 @@ auto csv = std::string{"42,13.37,test"};
 auto values = split(csv, ",");
 auto i = as_uint8(values[0]);  // i = 42
 auto f = as_float(values[1]);  // f = 13.37
-auto sv = values[2]; // sv = "test"
+auto s = as_string(values[2]); // s = "test"
 
 // ASCII stuff
 auto s1 = std::string{"abc"};

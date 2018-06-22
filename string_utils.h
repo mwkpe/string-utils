@@ -429,6 +429,12 @@ inline std::string replace(std::string_view sv, std::string_view search_token,
 
 
 #ifdef NONSTD_STRING_UTILS_CHARCONV
+  inline std::string as_string(std::string_view sv)
+  {
+    return std::string{sv};
+  }
+
+
   inline int as_int(std::string_view sv, int base = 10)
   {
     return detail::parse_number<int>(sv, base);

@@ -452,6 +452,20 @@ TEST_CASE("replace") {
 }
 
 
+TEST_CASE("readme") {
+  using namespace nonstd::string_utils;
+  auto csv = std::string{"42,13.37,test"};
+  auto values = split(csv, ",");
+  auto i = as_uint8(values[0]);
+  auto f = as_float(values[1]);
+  auto s = as_string(values[2]);
+  CHECK(values.size() == 3);
+  CHECK(i == 42);
+  CHECK(f == doctest::Approx(13.37));
+  CHECK(s == "test");
+}
+
+
 TEST_CASE("ascii split and split cross check") {
   using namespace nonstd::string_utils;
   const char* s = "123,456,789,3";
@@ -468,6 +482,7 @@ TEST_CASE("ascii split and split cross check") {
 #ifdef NONSTD_STRING_UTILS_CHARCONV
 TEST_CASE("parse_number") {
   using namespace nonstd::string_utils;
+  CHECK(as_string("0") == "0");
   CHECK(as_int("0") == 0);
   CHECK(as_int("1024") == 1024);
   CHECK(as_int("-1024") == -1024);
