@@ -170,17 +170,16 @@ inline std::string replace(std::string_view sv, std::string_view search_token,
     std::string_view replace_token)
 {
   std::vector<std::size_t> positions;
-  auto pos = sv.find(search_token);
-  while (pos != sv.npos) {
-    positions.push_back(pos);
-    pos = sv.find(search_token, pos + search_token.size());
+  for (auto p = sv.find(search_token); p != sv.npos;
+      p = sv.find(search_token, p + search_token.size())) {
+    positions.push_back(p);
   }
   if (positions.empty())
     return std::string{sv};
 
   std::string result;
-  auto n = positions.size();
-  result.resize(sv.size() - search_token.size() * n + replace_token.size() * n);
+  result.resize(sv.size() - search_token.size() * positions.size() +
+      replace_token.size() * positions.size());
   auto result_it = std::begin(result);
   auto source_it = std::begin(sv);
   for (auto p : positions) {
@@ -202,12 +201,11 @@ inline std::string replace_inplace(std::string_view sv, std::string_view search_
   std::string result{sv};
   auto result_it = std::begin(result);
   auto pos = sv.find(search_token);
-
   while (pos != sv.npos) {
-    result_it = std::copy(std::begin(replace_token), std::end(replace_token), std::begin(result) + pos);
+    result_it = std::copy(std::begin(replace_token), std::end(replace_token),
+        std::begin(result) + pos);
     pos = sv.find(search_token, pos + search_token.size());
   }
-
   return result;
 }
 
