@@ -57,7 +57,7 @@ template <typename T> std::vector<T> inline split_keep_empty(std::string_view sv
   auto i = sv.find(token);
   std::vector<T> parts;
 
-  while (i != sv.npos) {
+  while (i != std::string_view::npos) {
     parts.emplace_back(sv.substr(start, i - start));
     start = i + token.size();
     i = sv.find(token, start);
@@ -75,7 +75,7 @@ template <typename T> std::vector<T> inline split_ignore_empty(std::string_view 
   auto i = sv.find(token);
   std::vector<T> parts;
 
-  while (i != sv.npos) {
+  while (i != std::string_view::npos) {
     if (auto len = i - start; len > 0)
       parts.emplace_back(sv.substr(start, len));
     start = i + token.size();
@@ -91,7 +91,7 @@ template <typename T> std::vector<T> inline split_ignore_empty(std::string_view 
 template <typename T> inline std::tuple<T, T> split_first(std::string_view sv,
     std::string_view token)
 {
-  if (auto i = sv.find(token); i != sv.npos) {
+  if (auto i = sv.find(token); i != std::string_view::npos) {
     return {T{sv.substr(0, i)}, T{sv.substr(i+token.size())}};
   }
   return {T{sv}, T{}};
@@ -101,7 +101,7 @@ template <typename T> inline std::tuple<T, T> split_first(std::string_view sv,
 template <typename T> inline std::tuple<T, T> split_last(std::string_view sv,
     std::string_view token)
 {
-  if (auto i = sv.rfind(token); i != sv.npos) {
+  if (auto i = sv.rfind(token); i != std::string_view::npos) {
     return {T{sv.substr(0, i)}, T{sv.substr(i+token.size())}};
   }
   return {T{sv}, T{}};
@@ -110,7 +110,7 @@ template <typename T> inline std::tuple<T, T> split_last(std::string_view sv,
 
 template <typename T> inline T before_first(std::string_view sv, std::string_view token)
 {
-  if (auto i = sv.find(token); i != sv.npos) {
+  if (auto i = sv.find(token); i != std::string_view::npos) {
     return T{sv.substr(0, i)};
   }
   return T{};
@@ -119,7 +119,7 @@ template <typename T> inline T before_first(std::string_view sv, std::string_vie
 
 template <typename T> inline T before_last(std::string_view sv, std::string_view token)
 {
-  if (auto i = sv.rfind(token); i != sv.npos) {
+  if (auto i = sv.rfind(token); i != std::string_view::npos) {
     return T{sv.substr(0, i)};
   }
   return T{};
@@ -128,7 +128,7 @@ template <typename T> inline T before_last(std::string_view sv, std::string_view
 
 template <typename T> inline T after_first(std::string_view sv, std::string_view token)
 {
-  if (auto i = sv.find(token); i != sv.npos) {
+  if (auto i = sv.find(token); i != std::string_view::npos) {
     return T{sv.substr(i + token.size())};
   }
   return T{};
@@ -137,7 +137,7 @@ template <typename T> inline T after_first(std::string_view sv, std::string_view
 
 template <typename T> inline T after_last(std::string_view sv, std::string_view token)
 {
-  if (auto i = sv.rfind(token); i != sv.npos) {
+  if (auto i = sv.rfind(token); i != std::string_view::npos) {
     return T{sv.substr(i + token.size())};
   }
   return T{};
@@ -148,7 +148,7 @@ template <typename T> inline T between(std::string_view sv, std::string_view fir
     std::string_view second_token, bool greedy = false)
 {
   if (auto i = sv.find(first_token), j = greedy ? sv.rfind(second_token) : sv.find(second_token);
-      i != sv.npos && j != sv.npos && j > i) {
+      i != std::string_view::npos && j != std::string_view::npos && j > i) {
     return T{sv.substr(i + first_token.size(), j - i - first_token.size())};
   }
   return T{};
@@ -159,7 +159,7 @@ template <typename T> inline T rbetween(std::string_view sv, std::string_view fi
     std::string_view second_token, bool greedy = false)
 {
   if (auto i = sv.rfind(first_token), j = greedy ? sv.find(second_token) : sv.rfind(second_token);
-      i != sv.npos && j != sv.npos && j < i) {
+      i != std::string_view::npos && j != std::string_view::npos && j < i) {
     return T{sv.substr(j + first_token.size(), i - j - first_token.size())};
   }
   return T{};
@@ -170,7 +170,7 @@ inline std::string replace(std::string_view sv, std::string_view search_token,
     std::string_view replace_token)
 {
   std::vector<std::size_t> positions;
-  for (auto p = sv.find(search_token); p != sv.npos;
+  for (auto p = sv.find(search_token); p != std::string_view::npos;
       p = sv.find(search_token, p + search_token.size())) {
     positions.push_back(p);
   }
@@ -201,7 +201,7 @@ inline std::string replace_inplace(std::string_view sv, std::string_view search_
   std::string result{sv};
   auto result_it = std::begin(result);
   auto pos = sv.find(search_token);
-  while (pos != sv.npos) {
+  while (pos != std::string_view::npos) {
     result_it = std::copy(std::begin(replace_token), std::end(replace_token),
         std::begin(result) + pos);
     pos = sv.find(search_token, pos + search_token.size());
