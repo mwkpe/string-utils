@@ -1,8 +1,8 @@
 #include "../string_utils.h"
 #include "hayai/hayai.hpp"
-
 #include <string>
 #include <random>
+#include <fstream>
 
 
 // https://www.youtube.com/watch?v=nXaxk27zwlk#t=40m
@@ -13,7 +13,8 @@
 class RandomFixture : public hayai::Fixture
 {
 public:
-  virtual void SetUp() {
+  virtual void SetUp()
+  {
     std::random_device rd;
     std::mt19937 mt{rd()};
     std::uniform_int_distribution<int> dist{0,9};
@@ -29,6 +30,29 @@ public:
   virtual void TearDown() {}
 
   std::string s;
+};
+
+
+class TextFixture : public hayai::Fixture
+{
+public:
+  virtual void SetUp()
+  {
+    std::ifstream fs{"text/OEB-2016.1-US.txt"};
+    if (fs.is_open()) {
+      std::stringstream ss;
+      ss << fs.rdbuf();
+      fs.close();
+      text = ss.str();
+    }
+  }
+  virtual void TearDown()
+  {
+    //std::ofstream fs{"text/replaced.txt"};
+    //fs << text;
+  }
+
+  std::string text;
 };
 
 
@@ -64,6 +88,18 @@ const char* csv_constw = "116112,117178,129932,138393,151968,155886,163385,16717
     "719266,732770,733818,736176,736337,741493,755542,757907,766336,773442,782817,784837,"
     "788282,796438,798506,801473,808019,810449,813513,817826,818428,826048,879258,879500,"
     "881416,898259,928830,958558,962443,994418,997562";
+
+const char* leper = R"(On one occasion Jesus was staying in a town, when he saw a man who was
+covered with leprosy. When the leper saw Jesus, he threw himself on his face and
+implored his help, "Master, if only you are willing, you are able to make me
+clean." Stretching out his hand, Jesus touched him, saying as he did so, "I am
+willing; become clean."
+    Instantly the leprosy left the man; and then Jesus impressed on him that he
+was not to say a word to anyone, "but," he added, "set out and show yourself to
+the priest, and make the offerings for your cleansing, in the manner directed by
+Moses, as evidence of your cure." However, the story about Jesus spread all the
+more, and great crowds came together to listen to him, and to be cured of their
+illnesses; but Jesus used to withdraw to lonely places and pray.)";
 
 
 /*
@@ -103,12 +139,37 @@ BENCHMARK(string, split_copy, 100, 10000)
 }
 
 
-BENCHMARK(string, replace, 100, 10000)
+/*
+BENCHMARK_F(TextFixture, replace, 5, 1000)
+{
+  auto s = nonstd::string_utils::detail::replace(text, "Jesus", "Logos");
+}
+
+
+BENCHMARK_F(TextFixture, replace_inplace, 5, 1000)
+{
+  auto s = nonstd::string_utils::detail::replace_inplace(text, "Jesus", "Logos");
+}
+*/
+
+
+/*
+BENCHMARK(string, replace, 100, 100000)
 {
   auto s = std::string{"The quick brown fox jumps over the lazy brown dog "
       "and eats a brown apple from a brown tree under a brown sky"};
   escape(&s);
-  s = nonstd::string_utils::detail::replace(s, "brown", "green");
+  s = nonstd::string_utils::detail::replace(s, "brown", "blueorangeredgreen");
+  clobber();
+}
+
+
+BENCHMARK(string, replace2, 100, 100000)
+{
+  auto s = std::string{"The quick brown fox jumps over the lazy brown dog "
+      "and eats a brown apple from a brown tree under a brown sky"};
+  escape(&s);
+  s = nonstd::string_utils::detail::replace2(s, "brown", "blueorangeredgreen");
   clobber();
 }
 
@@ -123,7 +184,6 @@ BENCHMARK(string, replace_inplace, 100, 10000)
 }
 
 
-/*
 BENCHMARK(string, split_for_each, 100, 100000)
 {
   nonstd::string_utils::ascii::split_for_each(csv_constw, 6, 1);
