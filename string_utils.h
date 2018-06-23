@@ -17,7 +17,7 @@ namespace nonstd::string_utils::detail
 {
 
 
-template<typename I, typename F> inline void transform(I start, I stop, F func)
+template<typename I, typename F> void transform(I start, I stop, F func)
 {
   while (start != stop) {
     *start = func(*start);
@@ -27,7 +27,7 @@ template<typename I, typename F> inline void transform(I start, I stop, F func)
 
 
 #ifdef NONSTD_STRING_UTILS_CHARCONV
-  template <typename T> inline T parse_number(std::string_view sv, int base = 10)
+  template <typename T> T parse_number(std::string_view sv, int base = 10)
   {
     T value{};
     std::from_chars(sv.data(), sv.data() + sv.size(), value, base);
@@ -36,7 +36,7 @@ template<typename I, typename F> inline void transform(I start, I stop, F func)
 #endif  // NONSTD_STRING_UTILS_CHARCONV
 
 
-template<typename I> inline bool compare(I a, I b, const I last)
+template<typename I> bool compare(I a, I b, const I last)
 {
   if (*a != *b)
     return false;
@@ -50,7 +50,7 @@ template<typename I> inline bool compare(I a, I b, const I last)
 }
 
 
-template <typename T> std::vector<T> inline split_keep_empty(std::string_view sv,
+template <typename T> std::vector<T> split_keep_empty(std::string_view sv,
     std::string_view token)
 {
   std::size_t start = 0;
@@ -68,7 +68,7 @@ template <typename T> std::vector<T> inline split_keep_empty(std::string_view sv
 }
 
 
-template <typename T> std::vector<T> inline split_ignore_empty(std::string_view sv,
+template <typename T> std::vector<T> split_ignore_empty(std::string_view sv,
     std::string_view token)
 {
   std::size_t start = 0;
@@ -88,7 +88,25 @@ template <typename T> std::vector<T> inline split_ignore_empty(std::string_view 
 }
 
 
-template <typename T> inline std::tuple<T, T> split_first(std::string_view sv,
+template <typename T> std::vector<T> split_chars(std::string_view sv, std::size_t char_count,
+    std::size_t skip = 0)
+{
+  if (char_count == 0)
+    return std::vector<T>{};
+
+  std::vector<T> v;
+  auto size = sv.size();
+  std::size_t i = 0;
+  while (i < size) {
+    v.emplace_back(sv.substr(i, char_count));
+    i += char_count + skip;
+  }
+
+  return v;
+}
+
+
+template <typename T> std::tuple<T, T> split_first(std::string_view sv,
     std::string_view token)
 {
   if (auto i = sv.find(token); i != std::string_view::npos) {
@@ -98,7 +116,7 @@ template <typename T> inline std::tuple<T, T> split_first(std::string_view sv,
 }
 
 
-template <typename T> inline std::tuple<T, T> split_last(std::string_view sv,
+template <typename T> std::tuple<T, T> split_last(std::string_view sv,
     std::string_view token)
 {
   if (auto i = sv.rfind(token); i != std::string_view::npos) {
@@ -108,7 +126,7 @@ template <typename T> inline std::tuple<T, T> split_last(std::string_view sv,
 }
 
 
-template <typename T> inline T before_first(std::string_view sv, std::string_view token)
+template <typename T> T before_first(std::string_view sv, std::string_view token)
 {
   if (auto i = sv.find(token); i != std::string_view::npos) {
     return T{sv.substr(0, i)};
@@ -117,7 +135,7 @@ template <typename T> inline T before_first(std::string_view sv, std::string_vie
 }
 
 
-template <typename T> inline T before_last(std::string_view sv, std::string_view token)
+template <typename T> T before_last(std::string_view sv, std::string_view token)
 {
   if (auto i = sv.rfind(token); i != std::string_view::npos) {
     return T{sv.substr(0, i)};
@@ -126,7 +144,7 @@ template <typename T> inline T before_last(std::string_view sv, std::string_view
 }
 
 
-template <typename T> inline T after_first(std::string_view sv, std::string_view token)
+template <typename T> T after_first(std::string_view sv, std::string_view token)
 {
   if (auto i = sv.find(token); i != std::string_view::npos) {
     return T{sv.substr(i + token.size())};
@@ -135,7 +153,7 @@ template <typename T> inline T after_first(std::string_view sv, std::string_view
 }
 
 
-template <typename T> inline T after_last(std::string_view sv, std::string_view token)
+template <typename T> T after_last(std::string_view sv, std::string_view token)
 {
   if (auto i = sv.rfind(token); i != std::string_view::npos) {
     return T{sv.substr(i + token.size())};
@@ -144,7 +162,7 @@ template <typename T> inline T after_last(std::string_view sv, std::string_view 
 }
 
 
-template <typename T> inline T between(std::string_view sv, std::string_view first_token,
+template <typename T> T between(std::string_view sv, std::string_view first_token,
     std::string_view second_token, bool greedy = false)
 {
   if (auto i = sv.find(first_token), j = greedy ? sv.rfind(second_token) : sv.find(second_token);
@@ -155,7 +173,7 @@ template <typename T> inline T between(std::string_view sv, std::string_view fir
 }
 
 
-template <typename T> inline T rbetween(std::string_view sv, std::string_view first_token,
+template <typename T> T rbetween(std::string_view sv, std::string_view first_token,
     std::string_view second_token, bool greedy = false)
 {
   if (auto i = sv.rfind(first_token), j = greedy ? sv.find(second_token) : sv.rfind(second_token);
@@ -213,7 +231,7 @@ inline std::string replace_inplace(std::string_view sv, std::string_view search_
 }  // namepsace nonstd::string_utils::detail
 
 
-// The following functions expect ASCII (or single byte) encoding
+// The following functions expect ASCII
 //
 
 namespace nonstd::string_utils::ascii  
@@ -245,27 +263,6 @@ inline std::string as_lower(std::string_view sv)
   std::string s{sv};
   detail::transform(std::begin(s), std::end(s), ::tolower);
   return s;
-}
-
-
-// Splits sv each character_count characters, skipping skip characters after each split
-// E.g.: split(sv, 3)    : "abcdef123"   -> "abc", "def" and "123"
-//       split(sv, 3, 1) : "abc,def,123" -> "abc", "def" and "123"
-inline std::vector<std::string_view> split(std::string_view sv, std::size_t character_count,
-    std::size_t skip = 0)
-{
-  if (character_count == 0)
-    return {};
-
-  std::vector<std::string_view> v;
-  auto size = sv.size();
-  std::size_t i = 0;
-  while (i < size) {
-    v.push_back(sv.substr(i, character_count));
-    i += character_count + skip;
-  }
-
-  return v;
 }
 
 
@@ -310,6 +307,20 @@ inline std::vector<std::string> split_copy(std::string_view sv, std::string_view
   if (keep_empty_parts)
     return detail::split_keep_empty<std::string>(sv, token);
   return detail::split_ignore_empty<std::string>(sv, token);
+}
+
+
+inline std::vector<std::string_view> split_chars(std::string_view sv, std::size_t char_count,
+    std::size_t skip = 0)
+{
+  return detail::split_chars<std::string_view>(sv, char_count, skip);
+}
+
+
+inline std::vector<std::string> split_chars_copy(std::string_view sv, std::size_t char_count,
+    std::size_t skip = 0)
+{
+  return detail::split_chars<std::string>(sv, char_count, skip);
 }
 
 

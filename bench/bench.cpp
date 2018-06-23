@@ -117,7 +117,7 @@ BENCHMARK(string, starts_with, 100, 1000000)
 
 BENCHMARK(string, split, 100, 10000)
 {
-  auto v = nonstd::string_utils::split(csv_full, ",");
+  auto v = nonstd::string_utils::split(csv_constw, ",");
   for (auto sv : v) {
     int i;
     escape(&i);
@@ -129,11 +129,23 @@ BENCHMARK(string, split, 100, 10000)
 
 BENCHMARK(string, split_copy, 100, 10000)
 {
-  auto v = nonstd::string_utils::split_copy(csv_full, ",");
+  auto v = nonstd::string_utils::split_copy(csv_constw, ",");
   for (auto s : v) {
     int i;
     escape(&i);
     i = std::stoi(s);
+    clobber();
+  }
+}
+
+
+BENCHMARK(string, split_chars, 100, 10000)
+{
+  auto v = nonstd::string_utils::split_chars(csv_constw, 6, 1);
+  for (auto sv : v) {
+    int i;
+    escape(&i);
+    i = nonstd::string_utils::as_int(sv);
     clobber();
   }
 }

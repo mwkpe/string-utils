@@ -39,11 +39,11 @@ TEST_CASE("ascii case functions") {
 }
 
 
-TEST_CASE("ascii split") {
+TEST_CASE("split_chars") {
   using namespace nonstd::string_utils;
 
   SUBCASE("1") {
-    auto v = ascii::split("abcdefghijklmnop", 3);
+    auto v = split_chars("abcdefghijklmnop", 3);
     CHECK(v.size() == 6);
     CHECK(v[0] == "abc");
     CHECK(v[1] == "def");
@@ -54,7 +54,7 @@ TEST_CASE("ascii split") {
   }
 
   SUBCASE("2") {
-    auto v = ascii::split("abc,def,ghi,jkl,mno,p", 3, 1);
+    auto v = split_chars("abc,def,ghi,jkl,mno,p", 3, 1);
     CHECK(v.size() == 6);
     CHECK(v[0] == "abc");
     CHECK(v[1] == "def");
@@ -65,24 +65,24 @@ TEST_CASE("ascii split") {
   }
 
   SUBCASE("3") {
-    auto v = ascii::split("abc,def,ghi,jkl,mno,p", 0);
+    auto v = split_chars("abc,def,ghi,jkl,mno,p", 0);
     CHECK(v.size() == 0);
   }
 
   SUBCASE("4") {
-    auto v = ascii::split("", 1);
+    auto v = split_chars("", 1);
     CHECK(v.size() == 0);
   }
 
   SUBCASE("5") {
-    auto v = ascii::split("abc", 1, 1);
+    auto v = split_chars("abc", 1, 1);
     CHECK(v.size() == 2);
     CHECK(v[0] == "a");
     CHECK(v[1] == "c");
   }
 
   SUBCASE("6") {
-    auto v = ascii::split("abc", 1, 2);
+    auto v = split_chars("abc", 1, 2);
     CHECK(v.size() == 1);
     CHECK(v[0] == "a");
   }
@@ -466,11 +466,11 @@ TEST_CASE("readme") {
 }
 
 
-TEST_CASE("ascii split and split cross check") {
+TEST_CASE("split and split_chars cross check") {
   using namespace nonstd::string_utils;
   const char* s = "123,456,789,3";
   auto v1 = split(s, ",");
-  auto v2 = ascii::split(s, 3, 1);
+  auto v2 = split_chars(s, 3, 1);
   CHECK(v1.size() == v2.size());
   CHECK(v1[0] == v2[0]);
   CHECK(v1[1] == v2[1]);
