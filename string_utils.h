@@ -88,8 +88,8 @@ template <typename T> std::vector<T> split_ignore_empty(std::string_view sv,
 }
 
 
-template <typename T> std::vector<T> split_chars(std::string_view sv, std::size_t char_count,
-    std::size_t skip = 0)
+template <typename T> std::vector<T> split_chars(std::string_view sv,
+    std::size_t char_count, std::size_t skip = 0)
 {
   if (char_count == 0)
     return std::vector<T>{};
@@ -292,8 +292,8 @@ inline bool ends_with(std::string_view sv, std::string_view test)
 }
 
 
-inline std::vector<std::string_view> split(std::string_view sv, std::string_view token,
-    bool keep_empty_parts = true)
+inline std::vector<std::string_view> split(std::string_view sv,
+    std::string_view token, bool keep_empty_parts = true)
 {
   if (keep_empty_parts)
     return detail::split_keep_empty<std::string_view>(sv, token);
@@ -301,8 +301,8 @@ inline std::vector<std::string_view> split(std::string_view sv, std::string_view
 }
 
 
-inline std::vector<std::string> split_copy(std::string_view sv, std::string_view token,
-    bool keep_empty_parts = true)
+inline std::vector<std::string> split_copy(std::string_view sv,
+    std::string_view token, bool keep_empty_parts = true)
 {
   if (keep_empty_parts)
     return detail::split_keep_empty<std::string>(sv, token);
@@ -310,15 +310,15 @@ inline std::vector<std::string> split_copy(std::string_view sv, std::string_view
 }
 
 
-inline std::vector<std::string_view> split_chars(std::string_view sv, std::size_t char_count,
-    std::size_t skip = 0)
+inline std::vector<std::string_view> split_chars(std::string_view sv,
+    std::size_t char_count, std::size_t skip = 0)
 {
   return detail::split_chars<std::string_view>(sv, char_count, skip);
 }
 
 
-inline std::vector<std::string> split_chars_copy(std::string_view sv, std::size_t char_count,
-    std::size_t skip = 0)
+inline std::vector<std::string> split_chars_copy(std::string_view sv,
+  std::size_t char_count, std::size_t skip = 0)
 {
   return detail::split_chars<std::string>(sv, char_count, skip);
 }
