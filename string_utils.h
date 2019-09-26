@@ -6,7 +6,7 @@
 #include <string_view>
 #include <locale>
 #include <vector>
-#if __GNUC__ == 8 && __has_include(<charconv>)
+#if __GNUC__ >= 8 && __has_include(<charconv>)
   #define NONSTD_STRING_UTILS_CHARCONV
   #define NONSTD_STRING_UTILS_CHARCONV_INTEGRAL_TYPES_ONLY
   #include <charconv>
